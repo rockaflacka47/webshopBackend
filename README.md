@@ -6,4 +6,6 @@ The front end can be found at https://github.com/rockaflacka47/commerceShop
 
 This repo is private due to not wanting to pay for this project more then necessary there are values that should be retrieved from AWS key management, or another provider, that are hard coded in. 
 
+If I were to build it again I would use CodePipeline for this section to make easier lambda deployments.
+
 If you would like access to an admin account for the Add Item page please get in contact with me. 
