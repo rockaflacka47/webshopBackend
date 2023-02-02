@@ -2,6 +2,43 @@
   "name": "GetItems~",
   "version": "1.0.0",
   "dependencies": {
-    "mongodb": "latest"
+    "@types/aws-lambda": "^8.10.110",
+    "aws-cdk-lib": "^2.63.0",
+    "aws-lambda": "^1.0.7",
+    "dotenv": "^16.0.3",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "latest",
+    "nodemailer": "^6.9.1",
+    "password-hash": "^1.2.2",
+    "stripe": "^11.8.0"
+  },
+  "devDependencies": {
+    "funpack": "^1.3.1",
+    "prettier": "^2.8.3"
+  },
+  "funpack": {
+    "settings": {},
+    "functions": {
+      "GetPaginatedItems": "src/endpoints/getPaginatedItems/index.js",
+      "AddItem": "src/endpoints/addItems/index.js",
+      "GetItems": "src/endpoints/getItems/index.js",
+      "AddReview": "src/endpoints/addReview/index.js",
+      "CreatePaymentIntent": "src/endpoints/createPaymentIntent/index.js",
+      "CreateUser": "src/endpoints/createUser/index.js",
+      "GetCountItems": "src/endpoints/getCountItems/index.js",
+      "GetItem": "src/endpoints/getItem/index.js",
+      "GetItemsById": "src/endpoints/getItemsById/index.js",
+      "PushToCart": "src/endpoints/pushToCart/index.js",
+      "RemoveFromCart": "src/endpoints/removeFromCart/index.js",
+      "Signin": "src/endpoints/signin/index.js",
+      "UploadImage": "src/endpoints/uploadImage/index.js",
+      "StripeSuccess": "src/stripeCallbacks/success/index.js"
+    }
+  },
+  "scripts": {
+    "prettier": "prettier",
+    "package": "npx prettier --write . && funpack",
+    "deploy": "terraform apply",
+    "pd": "npx prettier --write . && funpack && terraform apply"
   }
 }

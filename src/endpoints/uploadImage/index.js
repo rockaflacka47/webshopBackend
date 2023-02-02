@@ -1,14 +1,11 @@
 const AWS = require("aws-sdk");
-
+require("dotenv").config();
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const BUCKET_NAME = "rocker-commerce";
-  const IAM_USER_KEY = "AKIARTNSI7EVKDVXD5CI";
-  const IAM_USER_SECRET = "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";
   const s3bucket = new AWS.S3({
-    accessKeyId: IAM_USER_KEY,
-    secretAccessKey: IAM_USER_SECRET,
+    accessKeyId: process.env.IAM_USER_KEY,
+    secretAccessKey: process.env.IAM_USER_SECRET,
   });
 
   event = JSON.parse(event.body);
@@ -16,7 +13,7 @@ exports.handler = async (event, context) => {
   const expirationInSeconds = 120;
 
   const params = {
-    Bucket: BUCKET_NAME,
+    Bucket: process.env.BUCKET_NAME,
     Key: name,
     ContentType: "multipart/form-data",
     Expires: expirationInSeconds,

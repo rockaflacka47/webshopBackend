@@ -1,28 +1,8 @@
-const MongoClient = require("mongodb").MongoClient;
-
+const connectToDatabase = require("../../common/db").connectToDatabase;
+require("dotenv").config();
 const PasswordHashGenerate = require("password-hash").generate;
 
 const JwtSign = require("jsonwebtoken").sign;
-
-//should be retrieved from AWS key management or another provider but due to
-//this being a project I do not want to spend money on it is hardcoded.
-const MONGODB_URI =
-  "mongodb+srv://admin:admin@cluster0.adnpeqj.mongodb.net/?retryWrites=true&w=majority";
-
-let cachedDb = null;
-
-async function connectToDatabase() {
-  if (cachedDb) {
-    return cachedDb;
-  }
-
-  const client = await MongoClient.connect(MONGODB_URI);
-
-  const db = await client.db("db");
-
-  cachedDb = db;
-  return db;
-}
 
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -45,11 +25,9 @@ exports.handler = async (event, context) => {
     user = await db.collection("User").findOne(query);
 
     const email = user.Email;
-    //should be retrieved from AWS key management or another provider but due to
-    //this being a project I do not want to spend money on it is hardcoded.
     token = JwtSign(
       { Email: email, Password: event.Password },
-      "tennis one two seven nine ball cat dog frisbee",
+      process.env.SIGN_TOKEN,
       {
         expiresIn: "2 days",
       }

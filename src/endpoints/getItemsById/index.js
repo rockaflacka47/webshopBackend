@@ -1,26 +1,6 @@
-const MongoClient = require("mongodb").MongoClient;
-
-//should be retrieved from AWS key management or another provider but due to
-//this being a project I do not want to spend money on it is hardcoded.
-const MONGODB_URI =
-  "mongodb+srv://admin:admin@cluster0.adnpeqj.mongodb.net/?retryWrites=true&w=majority";
+const connectToDatabase = require("../../common/db").connectToDatabase;
 
 const ObjectId = require("mongodb").ObjectId;
-
-let cachedDb = null;
-
-async function connectToDatabase() {
-  if (cachedDb) {
-    return cachedDb;
-  }
-
-  const client = await MongoClient.connect(MONGODB_URI);
-
-  const db = await client.db("db");
-
-  cachedDb = db;
-  return db;
-}
 
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -32,13 +12,15 @@ exports.handler = async (event, context) => {
   let responseBody = {};
   let statusCode = 404;
   let message = "Unable to retrieve cart items, please reload";
+  let ids = [];
   event.Items.forEach((item) => {
-    item.id = new ObjectId(item.id);
+    ids.push(new ObjectId(item.id));
   });
 
   try {
-    const query = { _id: { $in: event.Items } };
+    const query = { _id: { $in: ids } };
     responseBody = await db.collection("Item").find(query).toArray();
+    console.log(responseBody);
     statusCode = 200;
     message = "Success";
   } catch (error) {

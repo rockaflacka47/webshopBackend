@@ -1,30 +1,10 @@
-const MongoClient = require("mongodb").MongoClient;
-
+const connectToDatabase = require("../../common/db").connectToDatabase;
+require("dotenv").config();
 const PasswordHashVerify = require("password-hash").verify;
 
 const JwtSign = require("jsonwebtoken").sign;
 
 const JwtVerify = require("jsonwebtoken").verify;
-
-//should be retrieved from AWS key management or another provider but due to
-//this being a project I do not want to spend money on it is hardcoded.
-const MONGODB_URI =
-  "mongodb+srv://admin:admin@cluster0.adnpeqj.mongodb.net/?retryWrites=true&w=majority";
-
-let cachedDb = null;
-
-async function connectToDatabase() {
-  if (cachedDb) {
-    return cachedDb;
-  }
-
-  const client = await MongoClient.connect(MONGODB_URI);
-
-  const db = await client.db("db");
-
-  cachedDb = db;
-  return db;
-}
 
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -38,19 +18,25 @@ exports.handler = async (event, context) => {
   let token;
 
   event = JSON.parse(event.body);
+
   if (event.Token) {
-    //should be retrieved from AWS key management or another provider but due to
-    //this being a project I do not want to spend money on it is hardcoded.
-    tokenObj = JwtVerify(
-      event.Token,
-      "tennis one two seven nine ball cat dog frisbee"
-    );
-    console.log(tokenObj);
-    const query = { Email: tokenObj.Email };
-    user = await db.collection("User").findOne(query);
-    statusCode = 200;
-    message = "Successful";
-    token = event.Token;
+    try {
+      const tokenObj = JwtVerify(event.Token, process.env.SIGN_TOKEN);
+
+      const query = { Email: tokenObj.Email };
+      user = await db.collection("User").findOne(query);
+      statusCode = 200;
+      message = "Successful";
+      token = event.Token;
+    } catch (error) {
+      console.log("error: ");
+      console.log(error);
+      if (error.message === "jwt expired") {
+        statusCode = 403;
+        message = "Login expired, please login again";
+        token = {};
+      }
+    }
   } else {
     try {
       const query = { Email: event.Email };
@@ -58,14 +44,17 @@ exports.handler = async (event, context) => {
       if (!user) {
         statusCode = 404;
         message = "No user exists with that email";
+      } else if (event.byEmailOnly) {
+        message = "Successful";
+        statusCode = 200;
       } else {
         if (PasswordHashVerify(event.Password, user.Password)) {
           const email = user.Email;
           token = JwtSign(
             { Email: email, Password: event.Password },
-            "tennis one two seven nine ball cat dog frisbee",
+            process.env.SIGN_TOKEN,
             {
-              expiresIn: "2 days",
+              expiresIn: "30 days",
             }
           );
           message = "Successful";

@@ -1,26 +1,6 @@
-const MongoClient = require("mongodb").MongoClient;
+const connectToDatabase = require("../../common/db").connectToDatabase;
 
 const ObjectId = require("mongodb").ObjectId;
-
-//should be retrieved from AWS key management or another provider but due to
-//this being a project I do not want to spend money on it is hardcoded.
-const MONGODB_URI =
-  "mongodb+srv://admin:admin@cluster0.adnpeqj.mongodb.net/?retryWrites=true&w=majority";
-
-let cachedDb = null;
-
-async function connectToDatabase() {
-  if (cachedDb) {
-    return cachedDb;
-  }
-
-  const client = await MongoClient.connect(MONGODB_URI);
-
-  const db = await client.db("db");
-
-  cachedDb = db;
-  return db;
-}
 
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -44,7 +24,7 @@ exports.handler = async (event, context) => {
     update = { $push: { Reviews: review } };
     responseBody = await db.collection("Item").updateOne(query, update);
 
-    message = "Successfully added to cart";
+    message = "Successfully added review";
   } catch (error) {
     console.log("logging error: " + error);
     message = "Error adding review, please try again";
