@@ -1,5 +1,7 @@
 const connectToDatabase = require("../../common/db").connectToDatabase;
 
+const responseHeaders = require("../../common/headers").headers;
+
 const ObjectId = require("mongodb").ObjectId;
 
 exports.handler = async (event, context) => {
@@ -33,11 +35,7 @@ exports.handler = async (event, context) => {
 
   const response = {
     statusCode: statusCode,
-    headers: {
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST",
-    },
+    headers: responseHeaders,
     body: JSON.stringify({
       message: message,
       response: responseBody,

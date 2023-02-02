@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const responseHeaders = require("../../common/headers").headers;
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 exports.handler = async (event) => {
@@ -15,11 +15,7 @@ exports.handler = async (event) => {
 
   const response = {
     statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST",
-    },
+    headers: responseHeaders,
     body: JSON.stringify({
       client_secret: paymentIntent.client_secret,
     }),

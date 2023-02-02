@@ -1,7 +1,7 @@
 const connectToDatabase = require("../../common/db").connectToDatabase;
 require("dotenv").config();
 const PasswordHashVerify = require("password-hash").verify;
-
+const responseHeaders = require("../../common/headers").headers;
 const JwtSign = require("jsonwebtoken").sign;
 
 const JwtVerify = require("jsonwebtoken").verify;
@@ -73,11 +73,7 @@ exports.handler = async (event, context) => {
 
   const response = {
     statusCode: statusCode,
-    headers: {
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST",
-    },
+    headers: responseHeaders,
     body: JSON.stringify({
       message: message,
       userId: userId,

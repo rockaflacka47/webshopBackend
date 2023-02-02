@@ -1,4 +1,5 @@
 const AWS = require("aws-sdk");
+const responseHeaders = require("../../common/headers").headers;
 require("dotenv").config();
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -23,11 +24,7 @@ exports.handler = async (event, context) => {
 
   const response = {
     statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST",
-    },
+    headers: responseHeaders,
     body: JSON.stringify({
       fileUploadURL: preSignedURL,
     }),

@@ -1,4 +1,5 @@
 const connectToDatabase = require("../../common/db").connectToDatabase;
+const responseHeaders = require("../../common/headers").headers;
 require("dotenv").config();
 const PasswordHashGenerate = require("password-hash").generate;
 
@@ -44,11 +45,7 @@ exports.handler = async (event, context) => {
 
   const response = {
     statusCode: statusCode,
-    headers: {
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST",
-    },
+    headers: responseHeaders,
     body: JSON.stringify({
       message: message,
       userId: userId,
