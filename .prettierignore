@@ -1,0 +1,4 @@
+.terraform
+build
+dist
+node_modules
