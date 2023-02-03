@@ -36,9 +36,8 @@
     }
   },
   "scripts": {
-    "prettier": "prettier",
     "package": "npx prettier --write . && funpack",
-    "deploy": "terraform apply",
+    "deploy": "npx prettier --write . && terraform apply",
     "pd": "npx prettier --write . && funpack && terraform apply --auto-approve"
   }
 }
