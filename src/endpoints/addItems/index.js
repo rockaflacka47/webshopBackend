@@ -7,7 +7,7 @@ exports.handler = async (event, context) => {
 
   const db = await connectToDatabase();
 
-  event = event.body;
+  event = JSON.parse(event.body);
   let item;
   let statusCode = 502;
   let message = "Failed to add item, please try again or contact support.";

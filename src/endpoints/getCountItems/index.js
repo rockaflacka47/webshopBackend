@@ -6,6 +6,7 @@ exports.handler = async (event, context) => {
 
   const db = await connectToDatabase();
 
+  console.log(responseHeaders);
   const count = await db.collection("Item").count();
 
   const response = {

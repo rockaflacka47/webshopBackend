@@ -36,592 +36,240 @@ resource "aws_s3_bucket_acl" "lambda_bucket_acl" {
   acl    = "private"
 }
 
-data "archive_file" "add-items" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/AddItem"
-  output_path = "${path.module}/build/addItem.zip"
-}
-
-resource "aws_s3_object" "lambda-add-items" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "addItem.zip"
-  source = data.archive_file.add-items.output_path
-
-  etag = filemd5(data.archive_file.add-items.output_path)
-}
-
-
-resource "aws_lambda_function" "AddItemFunction" {
-  function_name = "AddItem"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-add-items.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.add-items.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-}
-
-resource "aws_cloudwatch_log_group" "addItem" {
-  name = "/aws/lambda/${aws_lambda_function.AddItemFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "get-items" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/GetItems"
-  output_path = "${path.module}/build/getItems.zip"
-}
-
-resource "aws_s3_object" "lambda-get-items" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "getItems.zip"
-  source = data.archive_file.get-items.output_path
-
-  etag = filemd5(data.archive_file.get-items.output_path)
-}
-
-
-resource "aws_lambda_function" "GetItemsFunction" {
-  function_name = "GetItems"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-get-items.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.get-items.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-}
-
-resource "aws_cloudwatch_log_group" "getItems" {
-  name = "/aws/lambda/${aws_lambda_function.GetItemsFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "get-items-paginated" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/GetPaginatedItems"
-  output_path = "${path.module}/build/getPaginatedItems.zip"
-}
-
-resource "aws_s3_object" "lambda-get-items-paginated" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "getItemsPaginated.zip"
-  source = data.archive_file.get-items-paginated.output_path
-
-  etag = filemd5(data.archive_file.get-items-paginated.output_path)
-}
-
-
-resource "aws_lambda_function" "GetPaginatedItemsFunction" {
-  function_name = "GetPaginatedItems"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-get-items-paginated.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.get-items-paginated.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL
+variable "lambdas" {
+  description = "Map of Lambda function names and API gateway resource paths."
+  type        = map(any)
+  default = {
+    signin = {
+      name       = "Signin"
+      path       = "DoLogin"
+      source     = "dist/Signin"
+      output     = "$build/Signin.zip"
+      key        = "Signin.zip"
+      httpMethod = "POST"
+    },
+    getPaginatedItems = {
+      name       = "GetPaginatedItems"
+      path       = "GetPaginatedItems"
+      source     = "dist/GetPaginatedItems"
+      output     = "$build/GetPaginatedItems.zip"
+      key        = "GetPaginatedItems.zip"
+      httpMethod = "POST"
+    },
+    getCountItems = {
+      name       = "GetCountItems"
+      path       = "GetCountItems"
+      source     = "dist/GetCountItems"
+      output     = "$build/GetCountItems.zip"
+      key        = "GetCountItems.zip"
+      httpMethod = "POST"
+    },
+    addItem = {
+      name       = "AddItem"
+      path       = "AddItem"
+      source     = "dist/AddItem"
+      output     = "$build/AddItem.zip"
+      key        = "AddItem.zip"
+      httpMethod = "POST"
+    },
+    addReview = {
+      name       = "AddReview"
+      path       = "AddReview"
+      source     = "dist/AddReview"
+      output     = "$build/AddReview.zip"
+      key        = "AddReview.zip"
+      httpMethod = "POST"
+    },
+    createPaymentIntent = {
+      name       = "CreatePaymentIntent"
+      path       = "CreatePaymentIntent"
+      source     = "dist/CreatePaymentIntent"
+      output     = "$build/CreatePaymentIntent.zip"
+      key        = "CreatePaymentIntent.zip"
+      httpMethod = "POST"
+    },
+    createUser = {
+      name       = "CreateUser"
+      path       = "CreateUser"
+      source     = "dist/CreateUser"
+      output     = "$build/CreateUser.zip"
+      key        = "CreateUser.zip"
+      httpMethod = "POST"
+    },
+    getItem = {
+      name       = "GetItem"
+      path       = "GetItem"
+      source     = "dist/GetItem"
+      output     = "$build/GetItem.zip"
+      key        = "GetItem.zip"
+      httpMethod = "POST"
+    },
+    getItems = {
+      name       = "GetItems"
+      path       = "GetItems"
+      source     = "dist/GetItems"
+      output     = "$build/GetItems.zip"
+      key        = "GetItems.zip"
+      httpMethod = "POST"
+    },
+    getItemsById = {
+      name       = "GetItemsById"
+      path       = "GetItemsById"
+      source     = "dist/GetItemsById"
+      output     = "$build/GetItemsById.zip"
+      key        = "GetItemsById.zip"
+      httpMethod = "POST"
+    },
+    pushToCart = {
+      name       = "PushToCart"
+      path       = "PushToCart"
+      source     = "dist/PushToCart"
+      output     = "$build/PushToCart.zip"
+      key        = "PushToCart.zip"
+      httpMethod = "POST"
+    },
+    removeFromCart = {
+      name       = "RemoveFromCart"
+      path       = "RemoveFromCart"
+      source     = "dist/RemoveFromCart"
+      output     = "$build/RemoveFromCart.zip"
+      key        = "RemoveFromCart.zip"
+      httpMethod = "POST"
+    },
+    uploadImage = {
+      name       = "UploadImage"
+      path       = "UploadImage"
+      source     = "dist/UploadImage"
+      output     = "$build/UplaodImage.zip"
+      key        = "UploadImage.zip"
+      httpMethod = "POST"
+    },
+    stripeSuccess = {
+      name       = "StripeSuccess"
+      path       = "StripeSuccess"
+      source     = "dist/StripeSuccess"
+      output     = "$build/StripeSuccess.zip"
+      key        = "StripeSuccess.zip"
+      httpMethod = "POST"
     }
   }
 }
 
-resource "aws_cloudwatch_log_group" "getPaginatedItems" {
-  name = "/aws/lambda/${aws_lambda_function.GetPaginatedItemsFunction.function_name}"
+data "archive_file" "zips" {
+  for_each = var.lambdas
+  type     = "zip"
 
-  retention_in_days = 30
+  source_dir  = each.value.source
+  output_path = each.value.output
 }
 
-data "archive_file" "add-review" {
-  type = "zip"
+resource "aws_s3_object" "uploaded-items" {
+  for_each = var.lambdas
+  bucket   = aws_s3_bucket.lambda_bucket.id
 
-  source_dir  = "${path.module}/dist/AddReview"
-  output_path = "${path.module}/build/AddReview.zip"
+  key    = each.value.key
+  source = each.value.output
+
+  etag = filemd5(each.value.output)
 }
 
-resource "aws_s3_object" "lambda-add-review" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "AddReview.zip"
-  source = data.archive_file.add-review.output_path
-
-  etag = filemd5(data.archive_file.add-review.output_path)
-}
-
-
-resource "aws_lambda_function" "AddReviewFunction" {
-  function_name = "AddReview"
+resource "aws_lambda_function" "lambda-functions" {
+  for_each      = var.lambdas
+  function_name = each.value.name
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-add-review.key
+  s3_key    = aws_s3_object.uploaded-items[each.key].key
 
   runtime = "nodejs16.x"
   handler = "index.handler"
 
-  source_code_hash = data.archive_file.add-review.output_base64sha256
+  source_code_hash = data.archive_file.zips[each.key].output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
 
   environment {
     variables = {
-      DB_URL = var.DB_URL
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "addReview" {
-  name = "/aws/lambda/${aws_lambda_function.AddReviewFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "create-payment-intent" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/CreatePaymentIntent"
-  output_path = "${path.module}/build/CreatePaymentIntent.zip"
-}
-
-resource "aws_s3_object" "lambda-create-payment-intent" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "CreatePaymentIntent.zip"
-  source = data.archive_file.create-payment-intent.output_path
-
-  etag = filemd5(data.archive_file.create-payment-intent.output_path)
-}
-
-
-resource "aws_lambda_function" "CreatePaymentIntentFunction" {
-  function_name = "CreatePaymentIntent"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-create-payment-intent.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.create-payment-intent.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      STIPRE_KEY = var.STRIPE_KEY
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "createPaymentIntent" {
-  name = "/aws/lambda/${aws_lambda_function.CreatePaymentIntentFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "create-user" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/CreateUser"
-  output_path = "${path.module}/build/CreateUser.zip"
-}
-
-resource "aws_s3_object" "lambda-create-user" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "CreateUser.zip"
-  source = data.archive_file.create-user.output_path
-
-  etag = filemd5(data.archive_file.create-user.output_path)
-}
-
-
-resource "aws_lambda_function" "CreateUserFunction" {
-  function_name = "CreateUser"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-create-user.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.create-user.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "createUser" {
-  name = "/aws/lambda/${aws_lambda_function.CreateUserFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "get-count-items" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/GetCountItems"
-  output_path = "${path.module}/build/GetCountItems.zip"
-}
-
-resource "aws_s3_object" "lambda-get-count-items" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "GetCountItems.zip"
-  source = data.archive_file.get-count-items.output_path
-
-  etag = filemd5(data.archive_file.get-count-items.output_path)
-}
-
-
-resource "aws_lambda_function" "GetCountItemsFunction" {
-  function_name = "GetCountItems"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-get-count-items.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.get-count-items.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "getCountItems" {
-  name = "/aws/lambda/${aws_lambda_function.GetCountItemsFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "get-item" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/GetItem"
-  output_path = "${path.module}/build/GetItem.zip"
-}
-
-resource "aws_s3_object" "lambda-get-item" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "GetItem.zip"
-  source = data.archive_file.get-item.output_path
-
-  etag = filemd5(data.archive_file.get-item.output_path)
-}
-
-
-resource "aws_lambda_function" "GetItemFunction" {
-  function_name = "GetItem"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-get-item.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.get-item.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "getItem" {
-  name = "/aws/lambda/${aws_lambda_function.GetItemFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "get-items-by-id" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/GetItemsById"
-  output_path = "${path.module}/build/GetItemsById.zip"
-}
-
-resource "aws_s3_object" "lambda-get-items-by-id" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "GetItemsById.zip"
-  source = data.archive_file.get-items-by-id.output_path
-
-  etag = filemd5(data.archive_file.get-items-by-id.output_path)
-}
-
-resource "aws_lambda_function" "GetItemsByIdFunction" {
-  function_name = "GetItemsById"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-get-items-by-id.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.get-items-by-id.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "getItemsById" {
-  name = "/aws/lambda/${aws_lambda_function.GetItemsByIdFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "push-to-cart" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/PushToCart"
-  output_path = "${path.module}/build/PushToCart.zip"
-}
-
-resource "aws_s3_object" "lambda-push-to-cart" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "PushToCart.zip"
-  source = data.archive_file.push-to-cart.output_path
-
-  etag = filemd5(data.archive_file.push-to-cart.output_path)
-}
-
-resource "aws_lambda_function" "PushToCartFunction" {
-  function_name = "PushToCart"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-push-to-cart.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.push-to-cart.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "pushToCart" {
-  name = "/aws/lambda/${aws_lambda_function.PushToCartFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "remove-from-cart" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/RemoveFromCart"
-  output_path = "${path.module}/build/RemoveFromCart.zip"
-}
-
-resource "aws_s3_object" "lambda-remove-from-cart" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "RemoveFromCart.zip"
-  source = data.archive_file.remove-from-cart.output_path
-
-  etag = filemd5(data.archive_file.remove-from-cart.output_path)
-}
-
-resource "aws_lambda_function" "RemoveFromCartFunction" {
-  function_name = "RemoveFromCart"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-remove-from-cart.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.remove-from-cart.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "removeFromCart" {
-  name = "/aws/lambda/${aws_lambda_function.RemoveFromCartFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "signin" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/Signin"
-  output_path = "${path.module}/build/Signin.zip"
-}
-
-resource "aws_s3_object" "lambda-signin" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "Signin.zip"
-  source = data.archive_file.signin.output_path
-
-  etag = filemd5(data.archive_file.signin.output_path)
-}
-
-resource "aws_lambda_function" "SigninFunction" {
-  function_name = "Signin"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-signin.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.signin.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      DB_URL = var.DB_URL,
-      SIGN_TOKEN = var.SIGN_TOKEN
-    }
-  }
-}
-
-resource "aws_cloudwatch_log_group" "signinLog" {
-  name = "/aws/lambda/${aws_lambda_function.SigninFunction.function_name}"
-
-  retention_in_days = 30
-}
-
-data "archive_file" "upload-image" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/UploadImage"
-  output_path = "${path.module}/build/UploadImage.zip"
-}
-
-resource "aws_s3_object" "lambda-upload-image" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "UploadImage.zip"
-  source = data.archive_file.upload-image.output_path
-
-  etag = filemd5(data.archive_file.upload-image.output_path)
-}
-
-resource "aws_lambda_function" "UploadImageFunction" {
-  function_name = "UploadImage"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-upload-image.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.upload-image.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      IAM_USER_KEY = var.IAM_USER_KEY,
+      DB_URL          = var.DB_URL,
+      BUCKET_NAME     = var.BUCKET_NAME,
+      IAM_USER_KEY    = var.IAM_USER_KEY,
       IAM_USER_SECRET = var.IAM_USER_SECRET,
-      BUCKET_NAME = var.BUCKET_NAME
+      STRIPE_KEY      = var.STRIPE_KEY,
+      SIGN_TOKEN      = var.SIGN_TOKEN,
+      EMAIL_USER      = var.EMAIL_USER,
+      EMAIL_PASS      = var.EMAIL_PASS
     }
   }
 }
 
-resource "aws_cloudwatch_log_group" "uploadImage" {
-  name = "/aws/lambda/${aws_lambda_function.UploadImageFunction.function_name}"
+resource "aws_cloudwatch_log_group" "log-groups" {
+  for_each = var.lambdas
+  name     = "/aws/lambda/${aws_lambda_function.lambda-functions[each.key].function_name}"
 
   retention_in_days = 30
 }
 
-data "archive_file" "stripe-success" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dist/StripeSuccess"
-  output_path = "${path.module}/build/StripeSuccess.zip"
+resource "aws_api_gateway_rest_api" "WebshopAPI" {
+  name        = "WebshopAPI"
+  description = "API Gateway for a webshop"
 }
 
-resource "aws_s3_object" "lambda-stripe-success" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "StripeSuccess.zip"
-  source = data.archive_file.stripe-success.output_path
-
-  etag = filemd5(data.archive_file.stripe-success.output_path)
+resource "aws_api_gateway_resource" "resources" {
+  for_each    = var.lambdas
+  rest_api_id = aws_api_gateway_rest_api.WebshopAPI.id
+  parent_id   = aws_api_gateway_rest_api.WebshopAPI.root_resource_id
+  path_part   = each.value.path
 }
 
-resource "aws_lambda_function" "StripeSuccessFunction" {
-  function_name = "StripeSuccess"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda-stripe-success.key
-
-  runtime = "nodejs16.x"
-  handler = "index.handler"
-
-  source_code_hash = data.archive_file.stripe-success.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-
-  environment {
-    variables = {
-      EMAIL_USER = var.EMAIL_USER,
-      EMAIL_PASS = var.EMAIL_PASS
-    }
-  }
+resource "aws_api_gateway_method" "methods" {
+  for_each         = aws_api_gateway_resource.resources
+  rest_api_id      = aws_api_gateway_rest_api.WebshopAPI.id
+  resource_id      = each.value.id
+  http_method      = var.lambdas[each.key].httpMethod
+  authorization    = "NONE"
+  api_key_required = false
 }
 
-resource "aws_cloudwatch_log_group" "stripeSuccess" {
-  name = "/aws/lambda/${aws_lambda_function.StripeSuccessFunction.function_name}"
+resource "aws_api_gateway_integration" "integration" {
+  for_each                = aws_api_gateway_method.methods
+  rest_api_id             = each.value.rest_api_id
+  resource_id             = each.value.resource_id
+  http_method             = each.value.http_method
+  integration_http_method = var.lambdas[each.key].httpMethod
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.lambda-functions[each.key].invoke_arn
+}
 
-  retention_in_days = 30
+resource "aws_lambda_permission" "apigw" {
+    depends_on = [
+      aws_api_gateway_integration.integration
+    ]
+  for_each      = var.lambdas
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = each.value.name
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/* portion grants access from any method on any resource
+  # within the API Gateway "REST API".
+  source_arn = "${aws_api_gateway_rest_api.WebshopAPI.execution_arn}/*/*"
+}
+module "api-gateway-enable-cors" {
+
+  for_each = aws_api_gateway_resource.resources
+  source   = "squidfunk/api-gateway-enable-cors/aws"
+  version  = "0.3.3"
+  # insert the 2 required variables here
+  api_id          = aws_api_gateway_rest_api.WebshopAPI.id
+  api_resource_id = each.value.id
+}
+
+resource "aws_api_gateway_deployment" "webshopapi" {
+  depends_on = [
+    aws_api_gateway_integration.integration
+  ]
+
+  rest_api_id = aws_api_gateway_rest_api.WebshopAPI.id
+  stage_name  = "test"
 }
 
 resource "aws_iam_role" "lambda_exec" {
