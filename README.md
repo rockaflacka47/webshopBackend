@@ -9,7 +9,7 @@ If you would like access to an admin account for the Add Item page please get in
 # Usage Instructions
 
 ## Pre-Requirements
-
+[Duck Duck Go](https://duckduckgo.com)
 1. [TerraformInstalled] (https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 2. AWS CLI installed - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 3. AWS admin credentials configured - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html
