@@ -6,3 +6,4 @@ build
 variables.tf
 terraform.tfstate*
 .terraform
+$build
