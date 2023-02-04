@@ -11,11 +11,11 @@ If you would like access to an admin account for the Add Item page please get in
 ## Pre-Requirements
 
 1. [Terraform Installed](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
-2. AWS CLI installed - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-3. AWS admin credentials configured - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html
-4. AWS IAM key/secret for a role with s3 upload permission - https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Integrating.Authorizing.IAM.S3CreatePolicy.html
-5. A Stripe API key - https://stripe.com/docs/keys
-6. A MongoDB connection url
+2. [AWS CLI installed](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+3. [AWS admin credentials configured](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html)
+4. [AWS IAM key/secret for a role with s3 upload permission](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Integrating.Authorizing.IAM.S3CreatePolicy.html)
+5. [A Stripe API key](https://stripe.com/docs/keys)
+6. [A MongoDB connection url](https://www.mongodb.com/docs/compass/current/connect/)
 ## Set up
 
 1. Run `npm install`.
