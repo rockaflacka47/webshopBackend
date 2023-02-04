@@ -32,10 +32,12 @@
       "RemoveFromCart": "src/endpoints/removeFromCart/index.js",
       "Signin": "src/endpoints/signin/index.js",
       "UploadImage": "src/endpoints/uploadImage/index.js",
-      "StripeSuccess": "src/stripeCallbacks/success/index.js"
+      "StripeSuccess": "src/stripeCallbacks/success/index.js",
+      "ClearCart": "src/endpoints/clearCart/index.js"
     }
   },
   "scripts": {
+    "pretty": "npx prettier --write .",
     "package": "npx prettier --write . && funpack",
     "deploy": "npx prettier --write . && terraform apply",
     "pd": "npx prettier --write . && funpack && terraform apply --auto-approve"

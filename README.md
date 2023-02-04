@@ -17,6 +17,7 @@ If you would like access to an admin account for the Add Item page please get in
 5. [A Stripe API key](https://stripe.com/docs/keys)
 6. [A MongoDB connection url](https://www.mongodb.com/docs/compass/current/connect/)
 7. An s3 bucket in the same region as your variables.tf aws_region variable.
+
 ## Set up
 
 1. Run `npm install`.

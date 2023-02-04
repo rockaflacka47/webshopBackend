@@ -151,6 +151,14 @@ variable "lambdas" {
       output     = "$build/StripeSuccess.zip"
       key        = "StripeSuccess.zip"
       httpMethod = "POST"
+    },
+    clearCart = {
+      name       = "ClearCart"
+      path       = "ClearCart"
+      source     = "dist/ClearCart"
+      output     = "$build/ClearCart.zip"
+      key        = "ClearCart.zip"
+      httpMethod = "POST"
     }
   }
 }
