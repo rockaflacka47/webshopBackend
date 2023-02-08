@@ -16,8 +16,9 @@ If you would like access to an admin account for the Add Item page please get in
 4. [AWS IAM key/secret for a role with lambda basic execution](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Integrating.Authorizing.IAM.S3CreatePolicy.html)
 5. [A Stripe API key](https://stripe.com/docs/keys)
 6. [A MongoDB connection url](https://www.mongodb.com/docs/compass/current/connect/)
-7. An s3 bucket in the same region as your variables.tf aws_region variable.
-8. Access to the MongoDB. Only Admin accounts are allowed to add items so once you create an account you will have to manually 
+7. A mongodb named "DB" with two collections "User" and "Item"
+8. An s3 bucket in the same region as your variables.tf aws_region variable.
+9. Access to the MongoDB. Only Admin accounts are allowed to add items so once you create an account you will have to manually 
 add `Type: "ADMIN"` to that account.
 
 ## Set up
