@@ -18,7 +18,7 @@ If you would like access to an admin account for the Add Item page please get in
 6. [A MongoDB connection url](https://www.mongodb.com/docs/compass/current/connect/)
 7. An s3 bucket in the same region as your variables.tf aws_region variable.
 8. Access to the MongoDB. Only Admin accounts are allowed to add items so once you create an account you will have to manually 
-add `Type: "Admin"` to that account.
+add `Type: "ADMIN"` to that account.
 
 ## Set up
 
