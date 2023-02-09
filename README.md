@@ -12,7 +12,6 @@ If you would like access to an admin account for the Add Item page please get in
 
 1. [Terraform Installed](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 2. [AWS CLI installed](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-2. <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">AWS CLI installed</a>
 3. [AWS admin credentials configured](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html)
 4. [AWS IAM key/secret for a role with lambda basic execution](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Integrating.Authorizing.IAM.S3CreatePolicy.html)
 5. [A Stripe API key](https://stripe.com/docs/keys)
