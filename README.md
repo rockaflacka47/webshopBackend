@@ -35,7 +35,7 @@ If you would like access to an admin account for the Add Item page please get in
 
 3. Create a variables.tf file in the root directory with the same variables as well as:
    - aws_region
-   the format for .tf variables is 
+   - the format for .tf variables is 
    `variable "(variable name)" {
        default = "(default value)"
    }`
