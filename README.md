@@ -24,7 +24,6 @@ If you would like access to an admin account for the Add Item page please get in
 
 1. Run `npm install`
 2. Create a .env file in the root directory with the following variables:
-`
    - DB_URL = "(mongo connection url)"
    - STRIPE_KEY = "(stripe api key)"
    - BUCKET_NAME = "(name of bucket to store images)"
@@ -33,10 +32,11 @@ If you would like access to an admin account for the Add Item page please get in
    - SIGN_TOKEN = "(any string, used to sign and verify tokens)"
    - EMAIL_USER = "(email client user)"
    - EMAIL_PASS = "(email client password)"
-`
+
 3. Create a variables.tf file in the root directory with the same variables as well as:
    - aws_region
-   the format for .tf variables is `variable "(variable name)" {
+   the format for .tf variables is 
+   `variable "(variable name)" {
        default = "(default value)"
    }`
 4. Run `terraform init`
