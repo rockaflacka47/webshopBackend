@@ -24,16 +24,21 @@ If you would like access to an admin account for the Add Item page please get in
 
 1. Run `npm install`
 2. Create a .env file in the root directory with the following variables:
-   - DB_URL = "<mongo connection url>"
-   - STRIPE_KEY: string
-   - BUCKET_NAME(to store uploaded images): string
-   - IAM_USER_KEY: string
-   - IAM_USER_SECRET: string
-   - SIGN_TOKEN(any string, used for signing and verifying passwords): string
-   - EMAIL_USER: string
-   - EMAIL_PASS: string
+`
+   - DB_URL = "(mongo connection url)"
+   - STRIPE_KEY = "(stripe api key)"
+   - BUCKET_NAME = "(name of bucket to store images)"
+   - IAM_USER_KEY = "(public key for user with s3 permissions)"
+   - IAM_USER_SECRET = "(secret key for user with s3 permissions)"
+   - SIGN_TOKEN = "(any string, used to sign and verify tokens)"
+   - EMAIL_USER = "(email client user)"
+   - EMAIL_PASS = "(email client password)"
+`
 3. Create a variables.tf file in the root directory with the same variables as well as:
    - aws_region
+   the format for .tf variables is `variable "(variable name)" {
+       default = "(default value)"
+   }`
 4. Run `terraform init`
 5. Run `npm run package`
 5. (optional) Run `terraform plan` to see the changes that will be made.
